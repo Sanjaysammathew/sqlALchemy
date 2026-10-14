@@ -1,8 +1,8 @@
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
-from models.employee import Employee
-from schemas.employee_schema import EmployeeCreate, EmployeeUpdate
+from models import Employee
+from schemas import EmployeeCreate, EmployeeUpdate
 
 
 def get_all(db: Session) -> list[Employee]:

@@ -6,7 +6,7 @@ from dotenv import load_dotenv
 from sqlalchemy import URL, create_engine
 from sqlalchemy.orm import DeclarativeBase, Session, sessionmaker
 
-load_dotenv(Path(__file__).resolve().parent / ".env")
+load_dotenv()
 
 _required_settings = ("DB_USER", "DB_PASSWORD", "DB_HOST", "DB_PORT", "DB_NAME")
 _missing_settings = [name for name in _required_settings if not os.getenv(name)]

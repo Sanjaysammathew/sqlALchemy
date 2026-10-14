@@ -3,7 +3,7 @@ from decimal import Decimal
 from sqlalchemy import Integer, Numeric, String
 from sqlalchemy.orm import Mapped, mapped_column
 
-from database import Base
+from config.database import Base
 
 
 class Employee(Base):

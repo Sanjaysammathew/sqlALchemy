@@ -3,9 +3,9 @@ from typing import AsyncGenerator
 
 from fastapi import FastAPI
 
-from models.employee import Employee
+from models import Employee
 from routers.employee_router import router
-from database import engine
+from config.database import engine
 
 
 @asynccontextmanager
