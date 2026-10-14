@@ -3,3 +3,5 @@ uvicorn[standard]
 SQLAlchemy
 psycopg[binary]
 python-dotenv
+
+# uvicorn main:app --reload    
