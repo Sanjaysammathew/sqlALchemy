@@ -8,8 +8,10 @@ from fastapi import HTTPException, UploadFile
 from services.file_service import save_resume
 
 
-async def get_all_employees(db: AsyncSession) -> list[Employee]:
-    return await employee_repository.get_all(db)
+async def get_all_employees(
+    db: AsyncSession, page: int, page_size: int
+) -> list[Employee]:
+    return await employee_repository.get_all(db, page, page_size)
 
 
 async def get_employee_by_id(db: AsyncSession, employee_id: int) -> Employee | None:

@@ -5,8 +5,11 @@ from models import Employee
 from schemas import EmployeeCreate, EmployeeUpdate
 
 
-async def get_all(db: AsyncSession) -> list[Employee]:
-    return (await db.scalars(select(Employee))).all()
+async def get_all(db: AsyncSession, page: int, page_size: int) -> list[Employee]:
+    offset = (page - 1) * page_size
+    statement = select(Employee).limit(page_size).offset(offset)
+    result = await db.scalars(statement)
+    return result.all()
 
 
 async def get_by_id(db: AsyncSession, employee_id: int) -> Employee | None:

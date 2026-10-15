@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, HTTPException, status, File, UploadFile
+from fastapi import APIRouter, Depends, HTTPException, status, File, UploadFile, Query
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from config.database import get_db
@@ -28,8 +28,10 @@ async def create_employee(
 @router.get("/", response_model=list[EmployeeResponse])
 async def get_all_employees(
     db: AsyncSession = Depends(get_db),
+    page: int = Query(default=1, ge=1),
+    page_size: int = Query(default=10, ge=1, le=100),
 ) -> list[EmployeeResponse]:
-    return await employee_service.get_all_employees(db)
+    return await employee_service.get_all_employees(db, page, page_size)
 
 
 @router.get("/{employee_id}", response_model=EmployeeResponse)
