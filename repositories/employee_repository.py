@@ -1,5 +1,6 @@
 from sqlalchemy import select, update as sa_update
 from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy import text
 
 from models import Employee
 from schemas import EmployeeCreate, EmployeeUpdate
@@ -75,3 +76,25 @@ async def save_resume_path(
     except Exception:
         await db.rollback()
         raise
+
+
+async def insert_employee(
+    db: AsyncSession,
+    name: str,
+    salary: float,
+    experience: int,
+) -> None:
+    await db.execute(
+        text("""
+            CALL insert_employee(
+                :name, :salary, :experience
+            )
+        """),
+        {
+            "name": name,
+            "salary": salary,
+            "experience": experience,
+        },
+    )
+
+    await db.commit()

@@ -5,6 +5,7 @@ from models import Employee
 from schemas import EmployeeCreate, EmployeeUpdate
 from pathlib import Path
 from fastapi import HTTPException, UploadFile
+from schemas.employee_schema import EmployeeProcedureInput
 from services.file_service import save_resume
 
 
@@ -98,3 +99,17 @@ async def upload_employee_resume(
         "employee_id": employee_id,
         "file_path": file_path,
     }
+
+
+async def create_employee_using_procedure(
+    db: AsyncSession,
+    employee: EmployeeProcedureInput,
+) -> dict:
+    await employee_repository.insert_employee(
+        db,
+        employee.name,
+        employee.salary,
+        employee.experience,
+    )
+
+    return {"message": "Employee created successfully"}

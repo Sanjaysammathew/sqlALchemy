@@ -1,4 +1,5 @@
 from fastapi import APIRouter, Depends, HTTPException, status, File, UploadFile, Query
+from schemas.employee_schema import EmployeeProcedureInput
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from config.database import get_db
@@ -87,3 +88,11 @@ async def upload_resume(
         employee_id,
         file,
     )
+
+
+@router.post("/procedure")
+async def create_employee_procedure(
+    employee: EmployeeProcedureInput,
+    db: AsyncSession = Depends(get_db),
+):
+    return await employee_service.create_employee_using_procedure(db, employee)

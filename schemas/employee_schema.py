@@ -1,5 +1,7 @@
 from pydantic import BaseModel, ConfigDict, Field
 
+from decimal import Decimal
+
 
 class EmployeeCreate(BaseModel):
     name: str = Field(min_length=1, max_length=100)
@@ -22,3 +24,8 @@ class EmployeeResponse(BaseModel):
 
     model_config = ConfigDict(from_attributes=True)
 
+
+class EmployeeProcedureInput(BaseModel):
+    name: str = Field(min_length=1, max_length=100)
+    salary: Decimal = Field(gt=0)
+    experience: int = Field(ge=0)
