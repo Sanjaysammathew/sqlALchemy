@@ -18,5 +18,7 @@ class EmployeeResponse(BaseModel):
     name: str
     salary: float
     experience: int
+    resume_path: str | None = None
 
     model_config = ConfigDict(from_attributes=True)
+

@@ -1,20 +1,13 @@
 import os
-from pathlib import Path
-from typing import Generator
+from typing import AsyncGenerator
 
 from dotenv import load_dotenv
-from sqlalchemy import URL, create_engine
-from sqlalchemy.orm import DeclarativeBase, Session, sessionmaker
+from sqlalchemy import URL
+from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_async_engine
+from sqlalchemy.orm import DeclarativeBase
 
 load_dotenv()
 
-_required_settings = ("DB_USER", "DB_PASSWORD", "DB_HOST", "DB_PORT", "DB_NAME")
-_missing_settings = [name for name in _required_settings if not os.getenv(name)]
-if _missing_settings:
-    raise RuntimeError(
-        "Missing database configuration in environment or .env: "
-        + ", ".join(_missing_settings)
-    )
 
 DATABASE_URL = URL.create(
     drivername="postgresql+psycopg",
@@ -25,7 +18,7 @@ DATABASE_URL = URL.create(
     database=os.environ["DB_NAME"],
 )
 
-engine = create_engine(
+engine = create_async_engine(
     DATABASE_URL,
     pool_size=5,
     max_overflow=10,
@@ -34,13 +27,13 @@ engine = create_engine(
     pool_pre_ping=True,
 )
 
-SessionLocal = sessionmaker(bind=engine, autoflush=False, expire_on_commit=False)
+SessionLocal = async_sessionmaker(bind=engine, autoflush=False, expire_on_commit=False)
 
 
 class Base(DeclarativeBase):
     pass
 
 
-def get_db() -> Generator[Session, None, None]:
-    with SessionLocal() as session:
+async def get_db() -> AsyncGenerator[AsyncSession, None]:
+    async with SessionLocal() as session:
         yield session

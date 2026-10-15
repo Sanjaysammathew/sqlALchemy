@@ -1,5 +1,5 @@
-from fastapi import APIRouter, Depends, HTTPException, status
-from sqlalchemy.orm import Session
+from fastapi import APIRouter, Depends, HTTPException, status, File, UploadFile
+from sqlalchemy.ext.asyncio import AsyncSession
 
 from config.database import get_db
 from schemas.employee_schema import (
@@ -8,6 +8,7 @@ from schemas.employee_schema import (
     EmployeeUpdate,
 )
 from services import employee_service
+from services.employee_service import upload_employee_resume
 
 router = APIRouter(prefix="/employees", tags=["Employees"])
 
@@ -17,24 +18,26 @@ router = APIRouter(prefix="/employees", tags=["Employees"])
     response_model=EmployeeResponse,
     status_code=status.HTTP_201_CREATED,
 )
-def create_employee(
+async def create_employee(
     employee_data: EmployeeCreate,
-    db: Session = Depends(get_db),
+    db: AsyncSession = Depends(get_db),
 ) -> EmployeeResponse:
-    return employee_service.create_employee(db, employee_data)
+    return await employee_service.create_employee(db, employee_data)
 
 
 @router.get("/", response_model=list[EmployeeResponse])
-def get_all_employees(db: Session = Depends(get_db)) -> list[EmployeeResponse]:
-    return employee_service.get_all_employees(db)
+async def get_all_employees(
+    db: AsyncSession = Depends(get_db),
+) -> list[EmployeeResponse]:
+    return await employee_service.get_all_employees(db)
 
 
 @router.get("/{employee_id}", response_model=EmployeeResponse)
-def get_employee(
+async def get_employee(
     employee_id: int,
-    db: Session = Depends(get_db),
+    db: AsyncSession = Depends(get_db),
 ) -> EmployeeResponse:
-    employee = employee_service.get_employee_by_id(db, employee_id)
+    employee = await employee_service.get_employee_by_id(db, employee_id)
     if employee is None:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
@@ -44,12 +47,12 @@ def get_employee(
 
 
 @router.patch("/{employee_id}", response_model=EmployeeResponse)
-def update_employee(
+async def update_employee(
     employee_id: int,
     employee_data: EmployeeUpdate,
-    db: Session = Depends(get_db),
+    db: AsyncSession = Depends(get_db),
 ) -> EmployeeResponse:
-    employee = employee_service.update_employee(db, employee_id, employee_data)
+    employee = await employee_service.update_employee(db, employee_id, employee_data)
     if employee is None:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
@@ -59,13 +62,26 @@ def update_employee(
 
 
 @router.delete("/{employee_id}")
-def delete_employee(
+async def delete_employee(
     employee_id: int,
-    db: Session = Depends(get_db),
+    db: AsyncSession = Depends(get_db),
 ) -> dict[str, str]:
-    if not employee_service.delete_employee(db, employee_id):
+    if not await employee_service.delete_employee(db, employee_id):
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail="Employee not found",
         )
     return {"message": "Employee deleted successfully"}
+
+
+@router.post("/{employee_id}/resume")
+async def upload_resume(
+    employee_id: int,
+    file: UploadFile = File(...),
+    db: AsyncSession = Depends(get_db),
+):
+    return await upload_employee_resume(
+        db,
+        employee_id,
+        file,
+    )

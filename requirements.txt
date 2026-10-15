@@ -2,6 +2,10 @@ fastapi
 uvicorn[standard]
 SQLAlchemy
 psycopg[binary]
+greenlet
 python-dotenv
+pytest
+python-multipart
+aiofiles
 
 # uvicorn main:app --reload    

@@ -10,7 +10,8 @@ from config.database import engine
 
 @asynccontextmanager
 async def lifespan(_: FastAPI) -> AsyncGenerator[None, None]:
-    Employee.metadata.create_all(bind=engine)
+    async with engine.begin() as conn:
+        await conn.run_sync(Employee.metadata.create_all)
     yield
 
 
@@ -19,5 +20,5 @@ app.include_router(router)
 
 
 @app.get("/")
-def home() -> dict[str, str]:
+async def home() -> dict[str, str]:
     return {"message": "Employee API is running"}
