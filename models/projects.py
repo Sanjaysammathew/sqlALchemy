@@ -21,7 +21,7 @@ class Projects(Base):
 
     title: Mapped[str] = mapped_column(
         String(100),
-        nullable=False,
+        nullable=True,
     )
 
     description: Mapped[str] = mapped_column(
@@ -29,9 +29,10 @@ class Projects(Base):
         nullable=False,
     )
 
+    credits: Mapped[int | None] = mapped_column(Integer)
+
     employees: Mapped[list["Employee"]] = relationship(
         "Employee",
         secondary=employee_project,
         back_populates="projects",
     )
-    
