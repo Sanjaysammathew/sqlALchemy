@@ -2,21 +2,35 @@ from fastapi import APIRouter, Depends
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from config.database import get_db
+from ports.repository_ports import ProjectRepository
+from repositories.project_repository import SqlAlchemyProjectRepository
 from schemas.project_schema import ProjectCreate, ProjectResponse
-from services import project_service
+from services.project_service import ProjectService
 
 
 router = APIRouter(prefix="/projects", tags=["Projects"])
 
 
+def get_project_repository(
+    db: AsyncSession = Depends(get_db),
+) -> ProjectRepository:
+    return SqlAlchemyProjectRepository(db)
+
+
+def get_project_service(
+    repository: ProjectRepository = Depends(get_project_repository),
+) -> ProjectService:
+    return ProjectService(repository)
+
+
 @router.post("/", response_model=ProjectResponse)
 async def create_project(
     data: ProjectCreate,
-    db: AsyncSession = Depends(get_db),
+    service: ProjectService = Depends(get_project_service),
 ):
-    return await project_service.create_project(db, data)
+    return await service.create_project(data)
 
 
 @router.get("/", response_model=list[ProjectResponse])
-async def get_projects(db: AsyncSession = Depends(get_db)):
-    return await project_service.get_projects(db)
+async def get_projects(service: ProjectService = Depends(get_project_service)):
+    return await service.get_projects()

@@ -1,11 +1,12 @@
-from sqlalchemy.ext.asyncio import AsyncSession
-
-from repositories import project_repository
+from ports.repository_ports import ProjectRepository
 
 
-async def create_project(db: AsyncSession, data):
-    return await project_repository.create_project(db, data)
+class ProjectService:
+    def __init__(self, repository: ProjectRepository):
+        self.repository = repository
 
+    async def create_project(self, data):
+        return await self.repository.create_project(data)
 
-async def get_projects(db: AsyncSession):
-    return await project_repository.get_all_projects(db)
+    async def get_projects(self):
+        return await self.repository.get_all_projects()

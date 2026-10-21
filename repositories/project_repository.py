@@ -2,6 +2,7 @@ from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from models.projects import Projects
+from ports.repository_ports import ProjectRepository
 
 
 async def create_project(db: AsyncSession, data):
@@ -21,4 +22,15 @@ async def get_all_projects(db: AsyncSession):
     statement = select(Projects).order_by(Projects.id)
 
     result = await db.scalars(statement)
-    return result.all() 
+    return result.all()
+
+
+class SqlAlchemyProjectRepository(ProjectRepository):
+    def __init__(self, db: AsyncSession):
+        self.db = db
+
+    async def create_project(self, data):
+        return await create_project(self.db, data)
+
+    async def get_all_projects(self):
+        return await get_all_projects(self.db)
