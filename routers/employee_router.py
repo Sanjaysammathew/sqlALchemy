@@ -2,6 +2,7 @@ from fastapi import APIRouter, Depends, Query
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from config.database import get_db
+from dependencies import get_employee_service
 from interface.repository_ports import EmployeeInterface
 from repositories.employee_repository import SqlAlchemyEmployeeRepository
 from schemas.employee_schema import (
@@ -13,18 +14,6 @@ from schemas.employee_schema import (
 from services.employee_service import EmployeeService
 
 router = APIRouter(prefix="/employees", tags=["Employees"])
-
-
-def get_employee_repository(
-    db: AsyncSession = Depends(get_db),
-) -> EmployeeInterface:
-    return SqlAlchemyEmployeeRepository(db)
-
-
-def get_employee_service(
-    repository: EmployeeInterface = Depends(get_employee_repository),
-) -> EmployeeService:
-    return EmployeeService(repository)
 
 
 @router.post("/", response_model=EmployeeCreated)
