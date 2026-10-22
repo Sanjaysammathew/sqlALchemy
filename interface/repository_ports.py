@@ -2,7 +2,7 @@ from abc import ABC, abstractmethod
 from typing import Any
 
 
-class EmployeeRepository(ABC):
+class EmployeeInterface(ABC):
     @abstractmethod
     async def create_employee(self, data: Any) -> Any:
         pass
@@ -38,7 +38,7 @@ class EmployeeRepository(ABC):
         pass
 
 
-class ProjectRepository(ABC):
+class ProjectInterface(ABC):
     @abstractmethod
     async def create_project(self, data: Any) -> Any:
         pass

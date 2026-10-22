@@ -1,8 +1,8 @@
-from ports.repository_ports import ProjectRepository
+from interface.repository_ports import ProjectInterface
 
 
 class ProjectService:
-    def __init__(self, repository: ProjectRepository):
+    def __init__(self, repository: ProjectInterface):
         self.repository = repository
 
     async def create_project(self, data):

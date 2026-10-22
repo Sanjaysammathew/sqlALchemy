@@ -1,10 +1,10 @@
 from fastapi import HTTPException
 
-from ports.repository_ports import EmployeeRepository
+from interface.repository_ports import EmployeeInterface
 
 
 class EmployeeService:
-    def __init__(self, repository: EmployeeRepository):
+    def __init__(self, repository: EmployeeInterface):
         self.repository = repository
 
     async def create_employee(self, data):

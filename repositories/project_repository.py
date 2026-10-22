@@ -2,7 +2,7 @@ from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from models.projects import Projects
-from ports.repository_ports import ProjectRepository
+from interface.repository_ports import ProjectInterface
 
 
 async def create_project(db: AsyncSession, data):
@@ -25,7 +25,7 @@ async def get_all_projects(db: AsyncSession):
     return result.all()
 
 
-class SqlAlchemyProjectRepository(ProjectRepository):
+class SqlAlchemyProjectRepository(ProjectInterface):
     def __init__(self, db: AsyncSession):
         self.db = db
 

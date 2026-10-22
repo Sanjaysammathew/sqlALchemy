@@ -4,10 +4,10 @@ from sqlalchemy.orm import joinedload, selectinload
 
 from models.employee import Employee
 from models.projects import Projects
-from ports.repository_ports import EmployeeRepository
+from interface.repository_ports import EmployeeInterface
 
 
-class SqlAlchemyEmployeeRepository(EmployeeRepository):
+class SqlAlchemyEmployeeRepository(EmployeeInterface):
     def __init__(self, db: AsyncSession):
         self.db = db
 
